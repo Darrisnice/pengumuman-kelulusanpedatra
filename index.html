@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Kelulusan - UPTD SMP Negeri 2 Tragah</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    .result { margin-top: 20px; padding: 15px; background: #e0f7fa; border-radius: 5px; }
+    .notfound { color: red; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Pengumuman Kelulusan</h1>
+    <p>Masukkan NISN Anda untuk melihat hasil kelulusan:</p>
+    <input type="text" id="nisnInput" placeholder="Masukkan NISN">
+    <button onclick="cekKelulusan()">Cek Kelulusan</button>
+    <div id="result" class="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    const dataSiswa = {
+      "0099979077": { nama: "AHMAD RAFI ALI", rata: "81,66", status: "LULUS" },
+      "3098995309": { nama: "ANDIRIYAH", rata: "80,75", status: "TIDAK LULUS" },
+      "0096052608": { nama: "ANISA", rata: "84,09", status: "LULUS" },
+      "0108117912": { nama: "ENIWATI NINGSIH", rata: "82,24", status: "LULUS" },
+      "0088362615": { nama: "FAHRUR ROZAK", rata: "80,61", status: "LULUS" },
+      "0076695506": { nama: "FANITA", rata: "84,52", status: "LULUS" },
+      "0104994251": { nama: "IMROATUL MUFIDA", rata: "82,58", status: "LULUS" },
+      "0098631169": { nama: "LUTFIADI", rata: "80,75", status: "LULUS" },
+      "0094087518": { nama: "MOCH. FATHAN ARHAN", rata: "79,82", status: "LULUS" },
+      "3091336997": { nama: "MUHAMAD RIZKI FAUZI", rata: "79,33", status: "LULUS" },
+      "0101273720": { nama: "MUHAMMAD HASI", rata: "82,14", status: "LULUS" },
+      "0093068085": { nama: "MUHAMMAD SOLIHIN", rata: "80,71", status: "LULUS" },
+      "0096748536": { nama: "MUHAMMAD YUSUP WILDAN", rata: "79,82", status: "TIDAK LULUS" },
+      "0098949316": { nama: "MUHAMMAD ZAINUL HASAN", rata: "82,52", status: "LULUS" },
+      "0096648101": { nama: "NASURUL RISKY", rata: "80,97", status: "LULUS" },
+      "3094181738": { nama: "RIFQI MAULANA", rata: "80,93", status: "LULUS" },
+      "0097469807": { nama: "SAFIR AMAL IMANI", rata: "80,67", status: "LULUS" },
+      "0095132637": { nama: "SARI MARSITA", rata: "82,43", status: "LULUS" },
+      "0109923540": { nama: "SILVIA MUKAROMAH", rata: "81,33", status: "TIDAK LULUS" },
+      "0092422324": { nama: "USNIATUL JANNAH", rata: "82,36", status: "LULUS" },
+      "0098364985": { nama: "VIKA VITRIA", rata: "83,05", status: "LULUS" },
+      "0099478959": { nama: "YULIANA", rata: "81,33", status: "LULUS" },
+      "0091367170": { nama: "YUNITA FAFULLAH", rata: "83,97", status: "LULUS" },
+      "0105458754": { nama: "ABBAS", rata: "83,39", status: "LULUS" },
+      "0077135051": { nama: "ANTONI", rata: "80,33", status: "LULUS" },
+      "0094982835": { nama: "AYATUL HUSNA", rata: "84,94", status: "LULUS" },
+      "0108188191": { nama: "FATIMAH AULIA PUTRI", rata: "82,83", status: "LULUS" },
+      "0093356536": { nama: "FITRIA RAHMADANI", rata: "83,82", status: "LULUS" },
+      "0109543559": { nama: "KHOLID", rata: "80,74", status: "LULUS" },
+      "0096995181": { nama: "LAILATUL QOMARIA", rata: "82,78", status: "LULUS" },
+      "0109360854": { nama: "LULUK LATIFAH", rata: "83,59", status: "LULUS" },
+      "0085926185": { nama: "M.SAAILUL GHUZRON", rata: "79,00", status: "TIDAK LULUS" },
+      "0094578436": { nama: "MAUFIROTUL JANNAH", rata: "85,01", status: "LULUS" },
+      "0101341118": { nama: "MOCH FAREL MAULANA", rata: "81,48", status: "LULUS" },
+      "0092636454": { nama: "MOH. BASIT", rata: "81,61", status: "TIDAK LULUS" },
+      "0077767513": { nama: "MOH. RENO", rata: "80,47", status: "LULUS" },
+      "0087614489": { nama: "MOH. ROHIM", rata: "81,30", status: "LULUS" },
+      "0093476606": { nama: "MOHAMMAD IKSAN", rata: "80,89", status: "LULUS" },
+      "0082422715": { nama: "MUHAMMAD IRFAN AL AZIZ", rata: "81,28", status: "LULUS" },
+      "0106304507": { nama: "MUHAMMAD NUVAL", rata: "81,48", status: "LULUS" },
+      "0105646919": { nama: "NUR AZIZAH", rata: "84,27", status: "LULUS" },
+      "0102237721": { nama: "NURUL KHOMARIYAH", rata: "83,76", status: "LULUS" },
+      "0096248783": { nama: "RIF'ATUL HANIFA", rata: "85,26", status: "LULUS" },
+      "0104054066": { nama: "RIZAL MIRZA", rata: "81,61", status: "LULUS" },
+      "0103366674": { nama: "TAUFIQ HIDAYAT", rata: "82,91", status: "LULUS" },
+      "0109565572": { nama: "VIKA ANDRIYANI", rata: "81,61", status: "TIDAK LULUS" },
+      "0102754672": { nama: "AGUS MINAL MUSLIMIN", rata: "81,31", status: "LULUS" },
+      "0095348727": { nama: "ALFARISI", rata: "81,61", status: "LULUS" },
+      "0103199254": { nama: "ALFIANSYA RIDHO ROBBI", rata: "81,07", status: "LULUS" },
+      "0096299861": { nama: "ANISA", rata: "83,90", status: "LULUS" },
+      "0096466325": { nama: "HARISUL ANAS", rata: "81,41", status: "LULUS" },
+      "0102437784": { nama: "HELMI ALI", rata: "81,38", status: "LULUS" },
+      "0105058094": { nama: "INAYATUL FADILAH", rata: "80,83", status: "TIDAK LULUS" },
+      "0099266069": { nama: "KUMALA", rata: "81,61", status: "TIDAK LULUS" },
+      "0101998465": { nama: "M. HASUN", rata: "81,61", status: "TIDAK LULUS" },
+      "0109875508": { nama: "M. SAMSUL ARIFIN", rata: "80,34", status: "LULUS" },
+      "0117168278": { nama: "MAWADDATUL HORIYAH", rata: "83,66", status: "LULUS" },
+      "0092254948": { nama: "MOCH ANDRI EFENDI", rata: "81,60", status: "LULUS" },
+      "0091515121": { nama: "MOCH. RIZKY RAMADHANI", rata: "80,71", status: "LULUS" },
+      "3096475742": { nama: "MOH. AZIZ", rata: "80,83", status: "LULUS" },
+      "0099883493": { nama: "MUFARROHAH", rata: "84,55", status: "LULUS" },
+      "0098640150": { nama: "MUHAMMAD QOMARUDDIN", rata: "81,39", status: "LULUS" },
+      "0088194143": { nama: "RAFFI IRAWAN", rata: "83,23", status: "LULUS" },
+      "0104267051": { nama: "RAHMA NIA", rata: "83,23", status: "LULUS" },
+      "0097815818": { nama: "RIZKIYATUN NISA", rata: "83,45", status: "LULUS" },
+      "3098157839": { nama: "SHAILATUL MAGHFIRAH", rata: "80,90", status: "LULUS" },
+      "0107992393": { nama: "SITI SYARIFA", rata: "82,01", status: "LULUS" },
+      "0094375003": { nama: "SOFYAN SAURI", rata: "81,55", status: "LULUS" },
+      "0099648210": { nama: "SYAFA'ATUL MUKARROMMAH", rata: "82,65", status: "LULUS" }
+    };
+
+    function cekKelulusan() {
+      const nisn = document.getElementById("nisnInput").value.trim();
+      const resultDiv = document.getElementById("result");
+
+      if (dataSiswa[nisn]) {
+        const siswa = dataSiswa[nisn];
+        resultDiv.innerHTML = `<strong>Nama:</strong> ${siswa.nama}<br>
+                               <strong>NISN:</strong> ${nisn}<br>
+                               <strong>Rata-rata:</strong> ${siswa.rata}<br>
+                               <strong>Keterangan:</strong> ${siswa.status}`;
+        resultDiv.classList.remove("notfound");
+      } else {
+        resultDiv.innerHTML = "Data tidak ditemukan. Periksa kembali NISN Anda.";
+        resultDiv.classList.add("notfound");
+      }
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
